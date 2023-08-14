@@ -19,7 +19,7 @@ module.exports = {
                 city_id SERIAL PRIMARY KEY,
                 name VARCHAR,
                 rating INT,
-                country_id INT REFERENCES countries(country_id)         
+                country_id INTEGER REFERENCES countries(country_id)         
             );
             insert into countries (name)
             values ('Afghanistan'),
@@ -224,23 +224,35 @@ module.exports = {
     },
     getCountries: (req, res) => {
         sequelize.query(`
-        SELECT * FROM countries
+        SELECT * FROM countries;
         `)
         .then((dbRes) => {res.status(200).send(dbRes[0])})
     },
     createCity: (req, res) => {
-        const {name, rating, country_id} = req.body
+        /*I have spent no less than two hours trying to fix this one issue and would love to know what I am doing wrong. It says that it cannot read the value undefined in regards to the country id being inserted into the cities table and any combination of variable tweaks have yielded no results*/
+        const {name, rating, countryId} = req.body
         sequelize.query(`
         INSERT INTO cities(name, rating, country_id)
-        VALUES('${name}', '${rating}', '${country_id}')
+        VALUES('${name}', '${rating}', '${countryId}'); 
         `)
+        console.log(req.body)
         .then((dbRes) => {res.status(200).send(dbRes[0])})
     },
     getCities: (req, res) => {
         sequelize.query(`
-        SELECT id AS city_id, rating, country AS country id 
-        JOIN cities 
-        WHERE 
+        SELECT city_id, ci.name AS city, rating
+        FROM cities AS ci
+        JOIN countries AS co
+        ON ci.country_id = co.country_id;
         `)
+        .then((dbRes) => {res.status(200).send(dbRes[0])})
+    },
+    deleteCity: (req, res) => {
+        const {id} = req.params
+        sequelize.query(`
+        DELETE FROM cities
+        WHERE city_id = ${id};
+        `)
+        .then((dbRes) => {res.status(200).send(dbRes[0])})
     }
 }
