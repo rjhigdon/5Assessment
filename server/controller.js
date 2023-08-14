@@ -233,17 +233,36 @@ module.exports = {
         const {name, rating, countryId} = req.body
         sequelize.query(`
         INSERT INTO cities(name, rating, country_id)
+<<<<<<< HEAD
         VALUES('${name}', '${rating}', '${countryId}'); 
+=======
+        VALUES('${name}', '${rating}', '${country_id}');
+>>>>>>> e7b56ed7c44c89bf08144319383b032d938e0a89
         `)
         console.log(req.body)
         .then((dbRes) => {res.status(200).send(dbRes[0])})
     },
     getCities: (req, res) => {
         sequelize.query(`
+<<<<<<< HEAD
         SELECT city_id, ci.name AS city, rating
         FROM cities AS ci
         JOIN countries AS co
         ON ci.country_id = co.country_id;
+=======
+        SELECT city_id, name AS city, rating
+        FROM cities AS ci
+        JOIN countries AS co
+        ON ci.country_id = co.country_id;
+        `)
+        .then((dbRes) => {res.status(200).send(dbRes[0])})
+    },
+    deleteCity: (req, res) => {
+        const {id} = req.params
+        sequelize.query(`
+        DELETE FROM cities
+        WHERE id = ${id};
+>>>>>>> e7b56ed7c44c89bf08144319383b032d938e0a89
         `)
         .then((dbRes) => {res.status(200).send(dbRes[0])})
     },
